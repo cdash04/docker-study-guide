@@ -153,4 +153,7 @@ With our ubuntu example, we saw with `docker ps -a` that our component name is `
 - You can **start** a paused container with `$ docker start <CONTAINER-NAME-OR-ID>`
 - You can **remove** a container with `$ docker rm <CONTAINER-NAME-OR-ID>`
 
+## Documentation
 
+- [Docker CLI Guide](https://docs.docker.com/reference/cli/docker/)
+- [What is Docker?](https://www.geeksforgeeks.org/devops/introduction-to-docker/)
