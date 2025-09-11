@@ -6,7 +6,7 @@
 
 ## What is Docker
 
-Docker is an OS‑level virtualization (or containerization) platform, which allows applications to share the host OS kernel instead of running a separate guest OS like in traditional virtualization. This design makes Docker containers lightweight, fast, and portable, while keeping them isolated from one another ([ref](https://www.geeksforgeeks.org/devops/introduction-to-docker/)).
+Docker is an OS‑level virtualization (or containerization) platform, which allows applications to share the host OS kernel instead of running a separate guest OS like in traditional virtualization. This design makes Docker containers lightweight, fast, and portable, while keeping them isolated from one another ([ref][1]).
 
 ## Why using Docker
 
@@ -16,6 +16,9 @@ Since Docker's containerization doesn't host its own OS and rather uses the shar
 - Will have the **same behavior** on any machine
 - Can be **scaled** with orchestrator like *Kubernetes* or *Docker Swarm*
 - Can be **started in second** with a simple line of command
+
+![VM vs Docker](./assets/vm-vs-docker.jpg)
+[ref][1]
 
 ## Key concepts
 
@@ -125,7 +128,7 @@ As you may have noticed, the container name has been randomly generated, since w
 
 In order to name the container, we only need to add the `--name` option while starting the container:
 
-`$ docker run -di ubuntu --name ordi`
+`$ docker run --name ordi -di ubuntu`
 
 In this example, the container is named `ordi`.
 
@@ -153,7 +156,23 @@ With our ubuntu example, we saw with `docker ps -a` that our component name is `
 - You can **start** a paused container with `$ docker start <CONTAINER-NAME-OR-ID>`
 - You can **remove** a container with `$ docker rm <CONTAINER-NAME-OR-ID>`
 
+## Dockerfile
+
+So far we saw how to roughly create and manage Docker containers, but what if we want to create our own container? That's what *Dockerfile* are here for.
+
+*Dockerfile* is a set of instruction using DSL (Domain Specific Language). It can be built with the *Docker engine* to create a *Docker image*.
+
+
+
+![Docker workflow](./assets/docker-components-formini.png)
+[ref][2]
+
+
 ## Documentation
 
-- [Docker CLI Guide](https://docs.docker.com/reference/cli/docker/)
+- [Docker CLI reference](https://docs.docker.com/reference/cli/docker/)
 - [What is Docker?](https://www.geeksforgeeks.org/devops/introduction-to-docker/)
+
+[1]: https://www.geeksforgeeks.org/devops/introduction-to-docker/
+[2]: https://thibautdemare.github.io/presentations/2019-05-intro_docker/images/vm-vs-docker.jpg
+[3]: https://ios.dz/images/blog/installation-docker-centos-8/docker-components-formini.png
