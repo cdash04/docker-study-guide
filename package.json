@@ -1,0 +1,29 @@
+{
+  "name": "docker-study-guide",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "repository": "git@github.com:cdash04/docker-study-guide.git",
+  "author": "Christophe Duchesne-Ashworth <contact@cda.sh>",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "express": "^5.1.0",
+    "dotenv": "^17.2.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.3.1",
+    "eslint": "^9.35.0",
+    "install": "^0.13.0",
+    "nodemon": "^3.1.10",
+    "npm": "^11.6.0",
+    "prettier": "^3.6.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts"
+  }
+}
