@@ -1,4 +1,6 @@
-FROM node:24
+FROM node:24.0.0-alpine
+
+RUN apk add curl
 
 WORKDIR /app
 
