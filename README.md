@@ -1,5 +1,11 @@
 # Docker study guide
 
+## Disclaimer
+
+This repository is 100% artisanal and no LLMs were involved during its conception.
+
+![no-ai](./assets/NAD_mark_1.webp)
+
 ## Requirement
 
 - [Docker](https://docs.docker.com/engine/install/)
