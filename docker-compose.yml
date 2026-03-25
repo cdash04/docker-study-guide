@@ -7,8 +7,11 @@ services:
       POSTGRES_DB: items
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     expose:
       - 5432
+    networks:
+      - items
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -18,7 +21,17 @@ services:
   server:
     build: .
     ports:
-      - 8000:3000
+      - 3000:3000
+    environment:
+      PORT: 3000
+      NODE_ENV: development
+      DB_USER: postgres
+      DB_HOST: db
+      DB_PASSWORD: password123
+      DB_NAME: items
+      DB_PORT: 5432
+    networks:
+      - items
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
       interval: 10s
@@ -28,7 +41,8 @@ services:
       db:
         condition: service_healthy
 
-  
-
 volumes:
   postgres_data:
+
+networks:
+  items:

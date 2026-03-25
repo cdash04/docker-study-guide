@@ -1,6 +1,5 @@
 export interface Item {
   id: number;
   name: string;
+  timestamp: string;
 }
-
-export let items: Item[] = [];

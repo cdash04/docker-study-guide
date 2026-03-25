@@ -2,9 +2,9 @@
 
 import express from "express";
 import itemRoutes from "./routes/itemRoutes";
+import healthRoutes from "./routes/healthRoutes";
 import { errorHandler } from "./middlewares/errorHandler";
 import config from "./config/config";
-import healthRoutes from "./routes/healthRoutes";
 const app = express();
 
 app.use(express.json());

@@ -1,36 +1,56 @@
 import { Request, Response, NextFunction } from "express";
-import { items, Item } from "../models/item";
+import { Pool } from "pg";
+import config from "../config/config";
+import { getItemRepository } from "../repository/itemRepository";
+
+const pool = new Pool({
+  user: config.dbUser,
+  host: config.dbHost,
+  database: config.dbDatabase,
+  password: config.dbPassword,
+  port: config.dbPort,
+});
+
+const itemRepository = getItemRepository(pool);
 
 // Create an item
-export const createItem = (req: Request, res: Response, next: NextFunction) => {
+export const createItem = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { name } = req.body;
-    const newItem: Item = { id: Date.now(), name };
-    items.push(newItem);
+    const newItem = await itemRepository.createItem(name);
     res.status(201).json(newItem);
   } catch (error) {
     next(error);
   }
 };
 
-// Read all items
-export const getItems = (req: Request, res: Response, next: NextFunction) => {
+// Get all items
+export const getItems = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
+    const items = await itemRepository.getItems();
     res.json(items);
   } catch (error) {
     next(error);
   }
 };
 
-// Read single item
-export const getItemById = (
+// Get single item
+export const getItemById = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
     const id = parseInt(req.params.id as string, 10);
-    const item = items.find((i) => i.id === id);
+    const item = await itemRepository.getItem(id);
     if (!item) {
       res.status(404).json({ message: "Item not found" });
       return;
@@ -42,32 +62,41 @@ export const getItemById = (
 };
 
 // Update an item
-export const updateItem = (req: Request, res: Response, next: NextFunction) => {
+export const updateItem = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const id = parseInt(req.params.id as string, 10);
     const { name } = req.body;
-    const itemIndex = items.findIndex((i) => i.id === id);
-    if (itemIndex === -1) {
+    const updatedItem = await itemRepository.updateItem(id, name);
+
+    if (!updatedItem) {
       res.status(404).json({ message: "Item not found" });
       return;
     }
-    items[itemIndex].name = name;
-    res.json(items[itemIndex]);
+    res.json(updatedItem);
   } catch (error) {
     next(error);
   }
 };
 
 // Delete an item
-export const deleteItem = (req: Request, res: Response, next: NextFunction) => {
+export const deleteItem = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const id = parseInt(req.params.id as string, 10);
-    const itemIndex = items.findIndex((i) => i.id === id);
-    if (itemIndex === -1) {
+    const deletedItem = await itemRepository.deleteItem(id);
+
+    if (!deletedItem) {
       res.status(404).json({ message: "Item not found" });
       return;
     }
-    const deletedItem = items.splice(itemIndex, 1)[0];
+
     res.json(deletedItem);
   } catch (error) {
     next(error);
