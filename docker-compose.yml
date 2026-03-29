@@ -8,8 +8,6 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-    expose:
-      - 5432
     networks:
       - items
     healthcheck:
@@ -18,10 +16,8 @@ services:
       timeout: 5s
       retries: 5
 
-  server:
+  api:
     build: .
-    ports:
-      - 3000:3000
     environment:
       PORT: 3000
       NODE_ENV: development
@@ -40,6 +36,18 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+  proxy:
+    image: nginx:alpine
+    volumes:
+      - ./proxy/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 80:80
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - items
 
 volumes:
   postgres_data:
