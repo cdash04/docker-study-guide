@@ -10,6 +10,8 @@ interface Config {
   dbDatabase: string;
   dbPassword: string;
   dbPort: number;
+  lokiHost: string;
+  lokiPort: number;
 }
 
 const config: Config = {
@@ -20,6 +22,8 @@ const config: Config = {
   dbDatabase: process.env.DB_NAME || "items",
   dbPassword: process.env.DB_PASSWORD || "password123",
   dbPort: Number(process.env.DB_PORT) || 5432,
+  lokiHost: process.env.LOKI_HOST || "loki",
+  lokiPort: Number(process.env.LOKI_PORT) || 3100,
 };
 
 export default config;

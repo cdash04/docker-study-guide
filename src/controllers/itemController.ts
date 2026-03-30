@@ -9,6 +9,7 @@ const pool = new Pool({
   database: config.dbDatabase,
   password: config.dbPassword,
   port: config.dbPort,
+  statement_timeout: 10000,
 });
 
 const itemRepository = getItemRepository(pool);

@@ -26,6 +26,8 @@ services:
       DB_PASSWORD: password123
       DB_NAME: items
       DB_PORT: 5432
+      LOKI_HOST: loki
+      LOKI_PORT: 3100
     networks:
       - items
     healthcheck:
@@ -36,6 +38,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      loki:
+        condition: service_started
 
   proxy:
     image: nginx:alpine
@@ -49,8 +53,39 @@ services:
     networks:
       - items
 
+  #### Observabilité ####
+
+  # Agrégat de logues
+  loki:
+    image: grafana/loki:latest
+    volumes:
+      - loki_data:/loki
+    networks:
+      - items
+
+  # Agrégat de métriques
+  prom:
+    image: prom/prometheus
+    volumes:
+      - prom_data:/prometheus
+    networks:
+      - items
+
+  # Visualisation de logues et métriques
+  grafana:
+    image: grafana/grafana-oss
+    volumes:
+      - ./grafana.ini:/etc/grafana/grafana.ini
+      - grafana_data:/var/lib/grafana
+    networks:
+      - items
+
+
 volumes:
   postgres_data:
+  loki_data:
+  prom_data:
+  grafana_data:
 
 networks:
   items:

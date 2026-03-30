@@ -69,8 +69,6 @@ export const getItemRepository = (pool: Pool): ItemRepository => {
 
       const { rows } = await pool.query<Item>(query, values);
 
-      console.log({ rows });
-
       if (rows.length != 1) {
         return undefined;
       }
