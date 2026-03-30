@@ -8,7 +8,7 @@ items:
       seq: 1
     http:
       method: POST
-      url: http://localhost:3000/api/items
+      url: http://localhost/api/items
       body:
         type: json
         data: |-
@@ -27,7 +27,7 @@ items:
       seq: 2
     http:
       method: GET
-      url: http://localhost:3000/api/items
+      url: http://localhost/api/items
       auth: inherit
     settings:
       encodeUrl: true
@@ -53,7 +53,7 @@ items:
       seq: 4
     http:
       method: PUT
-      url: ''
+      url: ""
       auth: inherit
     settings:
       encodeUrl: true
@@ -66,7 +66,7 @@ items:
       seq: 5
     http:
       method: DELETE
-      url: ''
+      url: ""
       auth: inherit
     settings:
       encodeUrl: true
@@ -79,7 +79,7 @@ items:
       seq: 6
     http:
       method: GET
-      url: ''
+      url: ""
       auth: inherit
     settings:
       encodeUrl: true
@@ -92,5 +92,5 @@ extensions:
     ignore:
       - node_modules
       - .git
-    exportedAt: '2026-03-30T01:50:38.836Z'
+    exportedAt: "2026-03-30T01:50:38.836Z"
     exportedUsing: Bruno
