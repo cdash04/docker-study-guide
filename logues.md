@@ -58,3 +58,21 @@ Le *docker compose* est déjà configuré avec un serveur grafana et loki foncti
 4. Sélectionnez le service Loki et ajoutez l'adresse de Loki, soit http://loki:3100.
 5. Cliquez sur *Save & test*
 6. Vous pouvez maintenant visualiser les logues de Express JS dans l'onglet Drilldown -> Grafana Logs Drilldown
+
+### Requête de logue
+
+Il est possible de faire des requêtes sur les logues avec *Grafana* et *Loki* en utilisant *LogQL*.
+
+Les logues dans Loki ont 3 parties:
+
+- L'Horodatage (*timestamp*)
+- Les étiquettes/sélecteur (*labels*/*selectors*)
+- Contenue du logue
+
+Ex:
+
+```log
+2026-03-31 10:08:35.570 { "level": "info", "appName": "Express" } INFO GET /health
+```
+
+Le *timestamp* `(2026-03-31 10:08:35.570)` et les *labels* (`{ "level": "info", "appName": "Express" }`) sont indexés, mais pas le contenu de la logue.
