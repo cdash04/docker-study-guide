@@ -76,3 +76,81 @@ Ex:
 ```
 
 Le *timestamp* `(2026-03-31 10:08:35.570)` et les *labels* (`{ "level": "info", "appName": "Express" }`) sont indexés, mais pas le contenu de la logue.
+
+### Format de logues
+
+Les requêtes *LogQL* ont le format suivant:
+
+`{ sélecteur flux de logue } | pipeline de logue`
+
+### Sélecteur de flux
+
+Les *sélecteurs* sont une combinaison d'étiquettes (*labels*). La combinaison d'étiquette se nomme un flux (*stream*). Le but du sélecteur est de limiter la quantité de logues avant de traiter ou de filter les logues.
+
+Les sélecteurs sont spécifiés grace à des pairs de clé/valeur comme suit:
+
+`{ appName="Express", level="info" }`
+
+4 opérations possible sur les sélecteurs:
+- `=` : l'étiquette possède exactement la valeur du sélecteur
+- `!=` : l'étiquette ne possède pas la valeur du sélecteur
+- `=~` : l'étiquette correspond à l'expression régulière du sélecteur
+- `!~` : l'étiquette ne correspond pas à correspond à l'expression régulière du sélecteur
+
+Exemples:
+
+- Afficher toutes les logues de niveaux `info` de l'application *Express*:
+
+`{ appName="Express", level="info" }`
+
+- Afficher toutes les logues sauf les erreurs:
+
+`{ level!="error" }`
+
+- Afficher seulement les logues de niveau `info` ou `error`:
+
+`{ level=~"(info|error)" }`
+
+- Afficher seulement les logues qui ne sont pas de niveau `info` ou `error`:
+
+`{ level!~"(info|error)" }`
+
+### Pipeline de flux
+
+Le flux sert principalement à faire les traitements suivants sur les logues:
+- filter
+- personnaliser
+- formatter
+
+Dans le cadre de ce cours, nous allons surtout nous attarder au filtrage, mais sachez qu'il est possible d'ajouter des fonctions de formatage au pipeline afin de modifier la façon dont les logues seront retournées.
+
+#### Filter
+
+Permet de filtrer les logues en fonction des étiquettes ou du contenu des logues.
+
+4 opérations sont disponibles pour filtrer le contenu de la logue:
+
+- `|=` : Le logue contient la chaîne de caractère
+- `!=` : Le logue ne contient pas la chaîne de caractère
+- `|~` : Le logue a une une correspondance avec l'expression régulière
+- `!~` : Le logue ne contient aucune correspondance avec l'expression régulière
+
+Par exemple:
+
+- Conserver seulement les logues qui mentionne le mot *db*:
+
+`{ appName="Express",level="error" } |= "db"`
+
+- Ignorer les nombreux logues causés par le *health check*:
+
+`{ appName="Express",level="info" } != "/health"`
+
+
+Comme tout pipeline qui se respecte, les opérations peuvent se succéder les uns les autres. Par exemple, cette requête retourne toutes les erreurs et les infos de l'application *Express*, ensuite séquentiellement les logues contenant `GET` sont conserver et ensuite ceux qui contiennent `/health` sont retiré.
+
+`{ appName="Express",level=~"(info|error)" } |= "GET" != "/health"`
+
+
+#### Fonction de gabarit
+
+Grafana fournit [plusieurs fonction](https://grafana.com/docs/loki/latest/query/template_functions/) permettant de personnaliser les logues en sorties. Je vous invite à les consulter si vous êtes curieux.
