@@ -50,6 +50,10 @@ services:
     depends_on:
       api:
         condition: service_healthy
+      grafana:
+        condition: service_started
+      prom:
+        condition: service_started
     networks:
       - items
 
@@ -65,11 +69,17 @@ services:
 
   # Agrégat de métriques
   prom:
-    image: prom/prometheus
+    image: prom/prometheus:v3.11.1
     volumes:
       - prom_data:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--web.route-prefix=/prom/"
+      - "--web.external-url=http://localhost/prom/"
     networks:
       - items
+    restart: unless-stopped
 
   # Visualisation de logues et métriques
   grafana:
@@ -79,7 +89,6 @@ services:
       - grafana_data:/var/lib/grafana
     networks:
       - items
-
 
 volumes:
   postgres_data:
