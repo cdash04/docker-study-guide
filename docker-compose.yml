@@ -59,9 +59,22 @@ services:
 
   #### Observabilité ####
 
+  # Exportateur des métriques de postgres
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:v0.19.1
+    environment:
+      DATA_SOURCE_URI: "db:5432/postgres?sslmode=disable"
+      DATA_SOURCE_USER: "postgres"
+      DATA_SOURCE_PASS: "password123"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - items
+
   # Agrégat de logues
   loki:
-    image: grafana/loki:latest
+    image: grafana/loki:3.7.1
     volumes:
       - loki_data:/loki
     networks:
