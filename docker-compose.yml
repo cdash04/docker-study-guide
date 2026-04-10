@@ -59,7 +59,7 @@ services:
 
   #### Observabilité ####
 
-  # Exportateur des métriques de postgres
+  # Exportateur des métriques PostgreSQL
   postgres-exporter:
     image: quay.io/prometheuscommunity/postgres-exporter:v0.19.1
     environment:
@@ -71,6 +71,15 @@ services:
         condition: service_healthy
     networks:
       - items
+
+  # Exportateur des métriques NGINX
+  proxy-exporter:
+    image: nginx/nginx-prometheus-exporter:1.5.1
+    command:
+      - "--nginx.scrape-uri=http://proxy:8080/stub_status"
+    networks:
+      - items
+
 
   # Agrégat de logues
   loki:
