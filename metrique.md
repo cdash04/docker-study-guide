@@ -52,3 +52,112 @@ Une application peut avoir des erreurs 500 (signal d'erreurs), mais ce n'est qu'
 Donc, la dépendance des divers problème rencontrer serait le suivant:
 
 Base de données saturé (**essence**) → Latence de l'API (**phénomène**) → Erreur 500, *timeout* (**phénomène**)
+
+## Série temporelle
+
+Lors de dépannage d'un service, une mesure faite sur l'application (métrique) en soit ne donnera probablement pas assez d'information. Par exemple, si un service a problème de latence et que vous voyez le nombre de requêtes par minute est de 100 requêtes par minute, il est difficile de déterminer si c'est élevé ou non.
+
+La mesure d'une métrique a besoin de **contexte** afin d'avoir du sense. On arrive a donner un contexte et un sense à une métrique lorsqu'on collecte plusieurs fois fois la métrique dans le temps afin de pouvoir déterminer une tendance. Cette prise chronologique de mesure se nomme [série temporelle](https://fr.wikipedia.org/wiki/Série_temporelle) et c'est ce qui permet de découvrir des tendances sur notre systèmes qui peuvent mener à des incidents.
+
+![](./assets/time-series-data.webp)
+
+## *Prometheus*
+
+Il existe plusieurs outil permettent de récolter et centraliser les métriques de divers services. Par exemple, la fonction publique utilise [Microsoft Power BI](https://www.microsoft.com/en-us/power-platform/products/power-bi/), ou une grosse compagnie qui n'utilise pas microsoft utilisent souvent [Datadog](https://www.datadoghq.com).
+
+Datadog est très dispendieux et PowerBI ne fonctionne que sur microsoft, donc dans le cadre du cours, nous allons utiliser [Prometheus](https://prometheus.io). Cet outil a l'avantage de fonctionner sur tous le systèmes d'exploitations, d'être *open source* et de pouvoir le *self-host* soit même (par exemple via Docker 😉).
+
+## *PromQL*
+
+Tout comme *Loki*, *Prometheus* centralise les métriques de plusieurs sources différentes. Donc, il est important d'être capable de filter ce qui est pertinent comme par exemple lors d'un incident. Avec *prometheus*, il est possible de faire des requêtes sur les métriques en utilisant le *PromQL*.
+
+### Types
+
+- Vecteur d'instant - Un ensemble de données temporelles contenant les mesures ayant tous le même temps
+- Vecteur de plage - Un ensemble de données temporelles contenant les mesures d'une plage de temps données
+- Scalaire - Une valeur numérique simple
+
+### *Instant vector* (vecteurs d'instant ?)
+
+Représente dans sa plus simple formes toutes les valeurs d'une métrique à un instant *t*. C'est le résultat qu'on obtient lorsqu'on fait une requête avec **seulement le nom d'une métrique**. Par exemple:
+
+```promQL
+express_http_request_total
+```
+
+Cette requête retourne toutes les séries temporelles de la métrique `express_http_request_total`. Il y aura **une série pour chaque combinaison d'étiquette**.
+
+Tout comme les logues, il est possible de filter les données temporelles en fonction de leurs étiquettes en utilisant des sélecteurs dans des `{}`. Par exemple:
+
+```promQL
+express_http_request_total{method="GET", status_code="200"}
+```
+
+Cette requête retourne les séries ayant la valeur `GET` pour l'étiquette `method` et la valeur `200` pour l'étiquette `status_code`.
+
+Tout comme le `logQL`, il est possible de faire les opérations booléennes suivantes sur les étiquettes:
+
+- `=` : l'étiquette possède exactement la valeur du sélecteur
+- `!=` : l'étiquette ne possède pas la valeur du sélecteur
+- `=~` : l'étiquette correspond à l'expression régulière du sélecteur
+- `!~` : l'étiquette ne correspond pas à correspond à l'expression régulière du sélecteur
+
+Par exemple:
+
+```promQL
+express_http_request_total{method!="GET", status_code!~"2[0-9]{2}"}
+```
+
+Cette requête retournes toutes les séries qui ne sont pas associées à la méthode `GET` (donc toutes les autres méthodes HTTP) et n'ont pas retourne de code de type 200 (signifiant que la requête a bien fonctionné).
+
+### *Range Vector* (vecteur de plage?)
+
+Permet de sélectionner un vecteurs de série en fonction du nombre d'unité de temps que la mesure a eu lieu. Permet donc de filter en fonction du temps. Pour ce faire, on spécifie le lapse de temps à l'intérieur de crochet (`[]`). Par exemple:
+
+```promQL
+express_http_request_total{method="GET", status_code="200"}[5m]
+```
+
+Cette requête retourne une ou des séries avec des données qui datent d'**il y a 5 minutes jusqu'à l'instant présent**.
+
+Voici toutes les unités de temps supportées:
+
+- ms – millisecondes
+- s – secondes – 1s égale 1000ms
+- m – minutes – 1m égale 60s (ignorant les secondes intercalaires)
+- h – heures – 1h égale 60m
+- d – journées – 1d égale 24h (ignorant l'heure avancé)
+- w – semaines – 1w égale 7d
+- y – années – 1y égale 365d (ignorant la journée intercalaire (29 février))
+
+### Opérateurs
+
+Les opérateurs suivant sont valide en `promQL`:
+
+- `+` (addition)
+- `-` (soustraction)
+- `*` (multiplication)
+- `/` (division)
+- `%` (modulo)
+- `^` (exposant)
+
+Les opérateurs peuvent se faire seulement entre:
+
+- un scalaire et un scalaire
+- un vecteur et un scalaire
+- un vecteur et un vecteur
+
+Les comparaisons booléennes suivante sont valide en `promQL`:
+
+- `==`
+- `!=`
+- `>`
+- `<`
+- `>=`
+- `<=`
+
+Le résultat de la comparaison est soit `0` pour *faux* ou `1` pour *vrai*.
+
+### Fonctions
+
+Le `promQL` [a plusieurs fonctions](https://prometheus.io/docs/prometheus/latest/querying/functions/) qui permettent de faire des transformations supplémentaires à nos séries temporelles.
