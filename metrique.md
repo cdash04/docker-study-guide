@@ -167,3 +167,38 @@ Les plus utilisées à mon avis:
 - `clam`: Permet de mettre des bornes max et min sur la série.
 - `<aggregation>_over_time`: Surtout `avg`, `min` et `max`.
 - `sum`: s'explique de soi-même.
+
+Il est important de comprendre le type des arguments des fonctions et la valeur de retour. Lorsque la fonction demande un *range vector*, il est important de lui fournir une métrique avec un temps associés (`[]`).
+
+### Agrégation
+
+Par défaut, une métrique retourne une série par combinaison d'étiquette.
+
+Par exemple, si une métrique a les étiquettes `method`, `path` et `status_code`, il y aura une série pour chaque combinaison de valeur de ces deux étiquettes.
+
+Cependant, il est possible d'agréger les valeurs des séries en fonction des étiquettes. En promQL il existe [plusieurs fonctions d'agrégation](https://prometheus.io/docs/prometheus/latest/querying/operators/#aggregation-operators). Les plus utiles sont:
+
+- sum(v) (calcul la somme)
+- avg(v) (calcul la moyenne)
+- min(v) (sélectionne la plus petite valeur)
+- max(v) (sélectionne la plus grande valeur)
+
+Voici comment les opérations d’agrégation doivent être structurées:
+
+```promQL
+<aggr-op> [without|by (<label list>)] ([parameter,] <vector expression>)
+```
+
+#### Exemple
+
+1. Nous voulons le **taux** de **requête HTTP** ayant un code d'erreur **500**. Nous voulons la **somme** taux **total** par **méthode**. Le taux doit être calculé sur des **intervalles de 5 minutes**. À quoi ressemblerait la requête promQL?:
+
+```promQL
+sum by(method) (rate(express_http_request_total{status_code=~"5[0-9]{2}"}[5m]))
+```
+
+2. Nous voulons maintenant faire la même opération que celle précédente. Cependant, nous voulons la **moyenne des taux par méthode**. À quoi ressemblerait la requête promQL?:
+
+```promQL
+avg by(method) (rate(express_http_request_total{status_code=~"5[0-9]{2}"}[5m]))
+```
