@@ -161,3 +161,9 @@ Le résultat de la comparaison est soit `0` pour *faux* ou `1` pour *vrai*.
 ### Fonctions
 
 Le `promQL` [a plusieurs fonctions](https://prometheus.io/docs/prometheus/latest/querying/functions/) qui permettent de faire des transformations supplémentaires à nos séries temporelles.
+
+Les plus utilisées à mon avis:
+- `rate`: particulièrement intéressant pour faire des métriques de trafique. 
+- `clam`: Permet de mettre des bornes max et min sur la série.
+- `<aggregation>_over_time`: Surtout `avg`, `min` et `max`.
+- `sum`: s'explique de soi-même.
