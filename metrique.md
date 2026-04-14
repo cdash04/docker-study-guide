@@ -202,3 +202,68 @@ sum by(method) (rate(express_http_request_total{status_code=~"5[0-9]{2}"}[5m]))
 ```promQL
 avg by(method) (rate(express_http_request_total{status_code=~"5[0-9]{2}"}[5m]))
 ```
+
+## Métrique d'une base de données
+
+### Le service fonctionne
+
+`pg_up`
+
+Simple mais critique. Retourne un scalaire, `0` si le service est *down*, `1` si le service est *up*.
+
+
+### Latence
+
+**Le temps de réplication** (replication lag) doit rester bas sinon des incohérences peuvent survenir dans la base de données si le *master* plante.
+
+Il est recommander que le temps de réplication reste **sous la barre des 10 secondes**.
+
+```promQL
+pg_replication_lag
+```
+
+Malheureusement, la configuration actuel de la base de données n'a pas de réplica, la métrique ne retourne donc pas de données.
+
+**Le temps de transaction actif** permet de mesure le temps que la transaction active la plus lente prend combien de temps. Il est préférable que cette métrique reste **sous la barre des 2 secondes**.
+
+```promQL
+pg_stat_activity_max_tx_duration{state="active"}
+```
+
+### Saturation
+
+L'**espace disque** se calcule avec la métrique suivante:
+
+```
+pg_database_size_bytes
+```
+
+Pour avoir la quantité maximum, il faut savoir la taille maximal du conteneur. Ce sont des méta données dont PostgreSQL ne dispose pas donc il faut chercher ces valeurs autrement. Par exemple utiliser [cAdvisor](https://github.com/google/cadvisor). Dans le cadre de ce cours et de ce projet, cAdvisor n'a pas été configuré car elle peut être complexe en fonction de l'ordinateur utilisé.
+
+**Le nombre de connexion disponible** se calcule en prenant le **nombre de connexion maximum** (`pg_settings_max_connections`) moins **le nombre de connexion utilisé** (`pg_settings_superuser_reserved_connections` et `pg_stat_activity_count`), divisé par le **nombre de connexion maximum** (`pg_settings_max_connections`).
+
+**À quoi ressemblerait la requête** afin d'avoir le nombre de connexion disponible en pourcentage?
+
+Idéalement, le nombre de connexion disponible devrait être au moins plus que 10%.
+
+Sans rentrer dans les détailles de comment PostgreSQL fonctionne, il est important de comparer la quantité de checkpoint demandé (*requested*) (`pg_stat_bgwriter_checkpoints_req`) pour écrire dans la BD versus la quantité demandé plus la quantité programmé (`pg_stat_bgwriter_checkpoints_timed`). 
+
+**À quoi ressemblerait la requête?**
+
+# Trafique
+
+Taux de requête qui utilise la cache.
+
+Le nombre de requête qui fait une lecture en cache:
+
+```promQL
+pg_stat_database_blks_hit
+```
+
+Le nombre de lecture total:
+
+```promQL
+pg_stat_database_blks_read
+```
+
+Considéré un signal de trafique, mais **pourriez vous créer un signal de saturation avec le taux de lecture en cache**?
