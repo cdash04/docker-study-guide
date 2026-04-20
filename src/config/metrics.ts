@@ -30,16 +30,16 @@ export const httpRequestCount = new Counter({
   name: "express_http_request_total",
   help: "The total number of HTTP requests received",
   labelNames: httpMetricsLabelNames,
+  registers: [register],
 });
 
 export const httpRequestDuration = new Histogram({
   name: "express_http_request_duration",
   help: "the last duration or response time of last request",
   labelNames: httpMetricsLabelNames,
+  buckets: [0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10],
+  registers: [register],
 });
-
-register.registerMetric(httpRequestCount);
-register.registerMetric(httpRequestDuration);
 
 client.collectDefaultMetrics({
   register,
