@@ -133,4 +133,4 @@ Par exemple:
 - [Node.JS](https://grafana.com/grafana/dashboards/11159-nodejs-application-dashboard/)
 - [NGINX](https://grafana.com/grafana/dashboards/9512-nginx-connections-overview/)
 
-**IMPORTANT**: Les maquettes sont de bon points de départ lors de la création de dashboard. Cependant, il est primordiale de l'adapté. Lors du TP4 je serai extrêmement exigeant et pénalisant si vous avez juste importé un dashboard sans l'adapter. 
+**IMPORTANT**: Les maquettes sont de bon points de départ lors de la création de dashboard. Cependant, il est primordiale de l'adapté. Lors du TP4 je serai extrêmement exigeant et pénalisant si vous avez juste importé un dashboard sans l'adapter.
