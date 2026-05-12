@@ -3,7 +3,10 @@ import { Pool } from "pg";
 import config from "../config/config";
 import { getItemRepository } from "../repository/itemRepository";
 
+const MAX_POOL_CONNECTION = 3;
+
 const pool = new Pool({
+  max: MAX_POOL_CONNECTION,
   user: config.dbUser,
   host: config.dbHost,
   database: config.dbDatabase,
