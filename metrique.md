@@ -2,7 +2,7 @@
 
 # Gestion des métriques
 
-Contrairement aux logues qui sont des informations laissé par un système, les métriques sont des mesures que nous faisons sur le système afin d'évaluer son niveau de *santé*.
+Contrairement aux logs qui sont des informations laissé par un système, les métriques sont des mesures que nous faisons sur le système afin d'évaluer son niveau de *santé*.
 
 ## Les 4 signaux d'or
 
@@ -87,7 +87,7 @@ express_http_request_total
 
 Cette requête retourne toutes les séries temporelles de la métrique `express_http_request_total`. Il y aura **une série pour chaque combinaison d'étiquette**.
 
-Tout comme les logues, il est possible de filter les données temporelles en fonction de leurs étiquettes en utilisant des sélecteurs dans des `{}`. Par exemple:
+Tout comme les logs, il est possible de filter les données temporelles en fonction de leurs étiquettes en utilisant des sélecteurs dans des `{}`. Par exemple:
 
 ```promQL
 express_http_request_total{method="GET", status_code="200"}
