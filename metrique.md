@@ -63,7 +63,7 @@ La mesure d'une métrique a besoin de **contexte** afin d'avoir du sense. On arr
 
 ## *Prometheus*
 
-Il existe plusieurs outil permettent de récolter et centraliser les métriques de divers services. Par exemple, la fonction publique utilise [Microsoft Power BI](https://www.microsoft.com/en-us/power-platform/products/power-bi/), ou une grosse compagnie qui n'utilise pas microsoft utilisent souvent [Datadog](https://www.datadoghq.com).
+Il existe plusieurs outil permettent de récolter et centraliser les métriques de divers services. Par exemple, la fonction publique utilise [Microsoft Power BI](https://www.microsoft.com/en-us/power-platform/products/power-bi/), ou les grosses compagnies qui n'utilisent pas microsoft utilisent souvent [Datadog](https://www.datadoghq.com).
 
 Datadog est très dispendieux et PowerBI ne fonctionne que sur microsoft, donc dans le cadre du cours, nous allons utiliser [Prometheus](https://prometheus.io). Cet outil a l'avantage de fonctionner sur tous le systèmes d'exploitations, d'être *open source* et de pouvoir le *self-host* soit même (par exemple via Docker 😉).
 
